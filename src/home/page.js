@@ -172,7 +172,7 @@ export default function Home() {
             </h2>
             <p className="text-gray-700 mb-6">
               Join our fast-growing Reseller network. DM us or contact us on
-              WhatsApp to get started. We can't wait to welcome you to the
+              WhatsApp to get started. We can&apos;t wait to welcome you to the
               EVOSTE family!
             </p>
           </Reveal>

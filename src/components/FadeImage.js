@@ -17,6 +17,7 @@ export default function FadeImage({
   return (
     <Image
       {...imgProps}
+      alt=""
       onLoad={(img) => {
         setLoaded(true);
         onLoad?.(img);
