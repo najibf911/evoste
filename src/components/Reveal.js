@@ -1,6 +1,11 @@
 "use client";
 import { useRef, useEffect, useState } from "react";
 
+// Tailwind safelist: ensure these utilities are included even if classes are built dynamically
+// eslint-disable-next-line no-unused-vars
+const __twSafelist =
+  "opacity-0 opacity-100 translate-y-6 -translate-y-6 scale-95 scale-100";
+
 /**
  * Reveal: animates children when scrolled into view.
  * Props:

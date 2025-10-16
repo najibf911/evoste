@@ -2,30 +2,25 @@
 import Link from "next/link";
 
 import { useState, useEffect } from "react";
+import { useCart } from "@/context/CartContext";
 
 export default function Navbar() {
-  // Optional: replace with props / context
-  const demoCartItems = [
-    { id: 1, name: "Product A", qty: 1 },
-    { id: 2, name: "Product B", qty: 2 },
-  ];
+  const { items: cartItems, totalQty, totalAmount, incQty, decQty, removeItem, isOpen: isCartOpen, closeCart, toggleCart } = useCart();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isCartOpen, setIsCartOpen] = useState(false);
 
   // Close panels with Escape
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === "Escape") {
         setIsMenuOpen(false);
-        setIsCartOpen(false);
+        closeCart();
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  const cartItems = demoCartItems; // swap with real data
 
   return (
     <>
@@ -62,7 +57,7 @@ export default function Navbar() {
                 className="group relative inline-flex items-center justify-center rounded-full bg-white/60 dark:bg-neutral-800/60 border border-neutral-300/60 dark:border-neutral-700/60 hover:border-emerald-500/60 dark:hover:border-emerald-500/60 p-2 transition-all shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 cursor-pointer"
                 aria-label="Toggle cart"
                 aria-expanded={isCartOpen}
-                onClick={() => setIsCartOpen(o => !o)}
+                onClick={toggleCart}
               >
                 <svg
                   className="w-5 h-5 text-neutral-700 dark:text-neutral-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors"
@@ -80,14 +75,14 @@ export default function Navbar() {
                   <circle cx="17" cy="19" r="1" />
                 </svg>
                 <span className="absolute -top-1 -right-1 bg-emerald-600 text-white text-[10px] font-semibold w-5 h-5 rounded-full flex items-center justify-center shadow ">
-                  {cartItems.reduce((s, i) => s + i.qty, 0)}
+                  {totalQty}
                 </span>
               </button>
             </div>
 
             {/* Mobile Menu Button */}
             <button
-              className="md:hidden relative inline-flex items-center justify-center rounded-full bg-white/60 dark:bg-neutral-800/60 border border-neutral-300/60 dark:border-neutral-700/60 hover:border-emerald-500/60 dark:hover:border-emerald-500/60 p-2 transition-all shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60"
+              className="md:hidden relative inline-flex items-center justify-center rounded-full bg-white/60 dark:bg-neutral-800/60 border border-neutral-300/60 dark:border-neutral-700/60 hover:border-emerald-500/60 dark:hover:border-emerald-500/60 p-2 transition-all shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60 z-0"
               aria-label="Toggle navigation menu"
               aria-expanded={isMenuOpen}
               onClick={() => setIsMenuOpen(o => !o)}
@@ -117,7 +112,7 @@ export default function Navbar() {
         {isMenuOpen && (
           <>
             <div
-              className="fixed inset-0 z-30 bg-black/30 backdrop-blur-sm md:hidden animate-fade-in"
+              className="fixed inset-0 -z-1 bg-black/30 backdrop-blur-sm md:hidden animate-fade-in"
               onClick={() => setIsMenuOpen(false)}
             />
             <div className="md:hidden absolute top-full left-0 w-full z-40 origin-top animate-scale-in bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl border-b border-neutral-200/60 dark:border-neutral-800/60 shadow-lg">
@@ -145,17 +140,17 @@ export default function Navbar() {
         {isCartOpen && (
           <>
             <div
-              className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm animate-fade-in"
-              onClick={() => setIsCartOpen(false)}
+              className="absolute top-0 inset-0 z-40 bg-black/40 backdrop-blur-sm animate-fade-in"
+              onClick={closeCart}
             />
-            <aside className="fixed right-0 top-0 h-screen w-[320px] sm:w-[360px] z-50 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl border-l border-neutral-200/60 dark:border-neutral-800/60 shadow-xl flex flex-col animate-slide-in">
-              <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-200/60 dark:border-neutral-800/60">
+            <aside className="absolute right-0 top-0 h-screen w-[320px] sm:w-[360px] z-50 bg-white/80 dark:bg-neutral-900/80 border-l border-neutral-200/60 dark:border-neutral-800/60 shadow-xl flex flex-col animate-slide-in">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-200/60 dark:border-neutral-800/60 backdrop-blur-sm">
                 <h2 className="font-semibold text-neutral-800 dark:text-neutral-100">
                   Cart
                 </h2>
                 <button
                   className="p-2 text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200 focus:outline-none"
-                  onClick={() => setIsCartOpen(false)}
+                  onClick={closeCart}
                   aria-label="Close cart"
                 >
                   <svg
@@ -170,18 +165,24 @@ export default function Navbar() {
                   </svg>
                 </button>
               </div>
-              <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+              <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4 backdrop-blur-sm">
                 {cartItems.map(item => (
-                  <div
-                    key={item.id}
-                    className="flex items-center justify-between rounded-md border border-neutral-200/60 dark:border-neutral-800/60 bg-white/70 dark:bg-neutral-800/40 px-3 py-3 shadow-sm"
-                  >
-                    <span className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
-                      {item.name}
-                    </span>
-                    <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                      x{item.qty}
-                    </span>
+                  <div key={`${item.id}-${item.variant || '_'}`} className="flex items-center justify-between gap-3 rounded-md border border-neutral-200/60 dark:border-neutral-800/60 bg-white/70 dark:bg-neutral-800/40 px-3 py-3 shadow-sm">
+                    <div className="min-w-0">
+                      <div className="text-sm font-medium text-neutral-800 dark:text-neutral-100 truncate">{item.name}</div>
+                      {item.variant && (
+                        <div className="text-[11px] text-neutral-500 dark:text-neutral-400">Variant: {item.variant}</div>
+                      )}
+                      <div className="text-sm text-neutral-700 dark:text-neutral-300">
+                        {typeof item.price === "number" ? `$${item.price.toFixed(2)}` : "-"}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button className="px-2 py-1 rounded border border-neutral-300 hover:bg-neutral-100/20 cursor-pointer text-sm" onClick={() => decQty(item.id, item.variant)}>-</button>
+                      <span className="w-6 text-center text-sm">{item.qty}</span>
+                      <button className="px-2 py-1 rounded border border-neutral-300 hover:bg-neutral-100/20 cursor-pointer text-sm" onClick={() => incQty(item.id, item.variant)}>+</button>
+                    </div>
+                    <button className="text-xs text-red-600 hover:underline cursor-pointer" onClick={() => removeItem(item.id, item.variant)}>Remove</button>
                   </div>
                 ))}
                 {!cartItems.length && (
@@ -190,7 +191,13 @@ export default function Navbar() {
                   </p>
                 )}
               </div>
-              <div className="border-t border-neutral-200/60 dark:border-neutral-800/60 p-5">
+              <div className="border-t border-neutral-200/60 dark:border-neutral-800/60 p-5 space-y-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-neutral-600 dark:text-neutral-300">Total</span>
+                  <span className="font-semibold">
+                    {typeof totalAmount === "number" ? `$${totalAmount.toFixed(2)}` : "-"}
+                  </span>
+                </div>
                 <button className="w-full rounded-md bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-600 text-white font-medium py-2.5 text-sm shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/70">
                   Checkout
                 </button>
