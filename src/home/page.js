@@ -41,6 +41,17 @@ export default function Home() {
               Discover More
             </a>
           </Reveal>
+          <Reveal delay={120} once>
+            <a
+              href="https://wa.me/6281310833392?text=Hi%20EVOSTE%20team,%20I%27m%20interested%20in%20EVOSTE."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block mt-4 rounded-full bg-green-500 hover:bg-green-600 text-white px-8 py-3 text-sm font-medium transition shadow"
+              aria-label="Chat on WhatsApp"
+            >
+              Chat on WhatsApp
+            </a>
+          </Reveal>
         </div>
       </section>
 
